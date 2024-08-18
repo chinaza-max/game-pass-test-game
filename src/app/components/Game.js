@@ -328,7 +328,7 @@ const stopGame=()=>{
     setTimeout(() => {
       window.location.reload();
     }, 3000);
-  }
+  }    
  
 
   useEffect(() => {
