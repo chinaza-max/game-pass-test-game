@@ -27,6 +27,7 @@ export default function Game() {
   const connection = new Connection(clusterApiUrl('devnet'));
   //const [domain, setDomain] = useState("http://localhost:3001/api/v1");
   const [domain, setDomain] = useState("/api/game");
+  const [signUpLoading, setSignUpLoading] = useState(false);
 
 
   
@@ -302,7 +303,8 @@ const stopGame=()=>{
 
 
   const createUserGameAccount =async ()=>{
-    
+
+    setSignUpLoading(true)
     const response = await fetch(`${domain}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -317,6 +319,7 @@ const stopGame=()=>{
     });
 
     if (!response.ok) {
+      setSignUpLoading(false)
       throw new Error('Failed to fetch transaction from server');
     }
 
@@ -334,6 +337,8 @@ const stopGame=()=>{
 
 
     setTimeout(() => {
+      setSignUpLoading(false)
+
       window.location.reload();
     }, 3000);
   }    
@@ -490,6 +495,9 @@ const stopGame=()=>{
       
       <div className="flex items-center justify-center h-screen bg-gray-100">
         <button onClick={createUserGameAccount} className="px-6 py-3 text-lg font-semibold text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors duration-300">
+        
+        
+        {signUpLoading  ? <div className="text-center mb-2 text-black"> Loading ..... </div> :''}
           Sign Up  for {gameName}
         </button>
       </div>    

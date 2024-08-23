@@ -7,14 +7,6 @@ export async function POST(req) {
   try {
     const { actionType, ...data } = await req.json();
 
-
-    console.log(actionType)
-
-    console.log("data")
-    console.log(data)
-    console.log("data")
-
-
     switch (actionType) {
       case 'doesUserGameAccountExist':
         return await handleResponse(doesUserGameAccountExist(data));
