@@ -26,7 +26,8 @@ export default function Game() {
   const [isAuthenticated, setIsAuthenticated] = useState(null);
   const connection = new Connection(clusterApiUrl('devnet'));
   //const [domain, setDomain] = useState("http://localhost:3001/api/v1");
-  const [domain, setDomain] = useState("/api");
+  const [domain, setDomain] = useState("/api/game");
+
 
   
   const [timerId, setTimerId] = useState(null);
@@ -127,7 +128,8 @@ export default function Game() {
   const checkAuthentication = async () => {
 
     try {
-      const response = await axios.post(`${domain}/game/doesUserGameAccountExist`, {
+      const response = await axios.post(`${domain}`, {
+        actionType:'doesUserGameAccountExist',
         gamerPublicKey:publicKey,
         gameId: gameId
       });
@@ -159,8 +161,9 @@ export default function Game() {
     try {
 
       if(loadBoth){
-        const response = await axios.get(`${domain}/game/getSingleUserGameAccount`, {
+        const response = await axios.get(`${domain}`, {
           params: {
+            type: 'getSingleUserGameAccount',
             userGameAcctPublicKey: userGameAcctPublicKey,
           },
         });
@@ -171,8 +174,9 @@ export default function Game() {
      
 
      
-      const response2 = await axios.get(`${domain}/game/getSingleGameAccount`, {
+      const response2 = await axios.get(`${domain}`, {
         params: {
+          type: 'getSingleGameAccount',
           gameId: gameId,
         },
       });
@@ -195,13 +199,14 @@ export default function Game() {
           return;
         }
   
-        const response = await fetch(`${domain}/game/userGameAccountActions`, {
+        const response = await fetch(`${domain}`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(
             { 
               userGameAcctPublicKey,
               type:"updateUserLevel",
+              actionType: 'userGameAccountActions',
               level
            })
         });
@@ -231,13 +236,14 @@ export default function Game() {
         return;
       }
 
-      const response = await fetch(`${domain}/game/userGameAccountActions`, {
+      const response = await fetch(`${domain}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(
           { 
             userGameAcctPublicKey,
             type:"updateUserScore",
+            actionType: 'userGameAccountActions',
             score
          })
       });
@@ -297,7 +303,7 @@ const stopGame=()=>{
 
   const createUserGameAccount =async ()=>{
     
-    const response = await fetch(`${domain}/game/getTrasaction`, {
+    const response = await fetch(`${domain}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(
@@ -305,6 +311,7 @@ const stopGame=()=>{
           gamerPublicKey:publicKey.toString(),
           gameId,
           type:"initializeUserGameAccount",
+          actionType:"initializeUserGameAccount",
           userAvatar:"https://cdn.pixabay.com/photo/2023/02/10/08/00/chick-7780328_1280.png"
         }),
     });
