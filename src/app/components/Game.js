@@ -26,7 +26,7 @@ export default function Game() {
   const [isAuthenticated, setIsAuthenticated] = useState(null);
   const connection = new Connection(clusterApiUrl('devnet'));
   //const [domain, setDomain] = useState("http://localhost:3001/api/v1");
-  const [domain, setDomain] = useState("https://game-pass-ljbn.onrender.com/api/v1");
+  const [domain, setDomain] = useState("/api");
 
   
   const [timerId, setTimerId] = useState(null);
