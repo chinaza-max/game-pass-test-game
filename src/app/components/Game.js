@@ -7,6 +7,8 @@ import { Connection,Transaction ,clusterApiUrl } from '@solana/web3.js';
 import axios from 'axios';
 import Image from "next/image";
 import Counter from "./counter";
+import Onboarding from "./onboarding";
+import LoadingScreen from "./loadingscreen";
 
 
 export default function Game() {
@@ -408,12 +410,14 @@ const stopGame=()=>{
     <>
 
       {!publicKey ? (
-         <div className="flex items-center justify-center h-screen bg-gray-100">
+         <>
          
-          <WalletMultiButton />
-        </div>
+          <Onboarding/>
+
+          
+        </>
       ) : isAuthenticated === null ? (
-        <div>Loading...</div>
+        <LoadingScreen/>
       ) : isAuthenticated!="false" ? (
      
         <>
