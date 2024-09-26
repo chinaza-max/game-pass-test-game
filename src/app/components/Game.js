@@ -262,7 +262,6 @@ export default function Game() {
 
       }
 
-  
     } catch (error) {
       setMessage(`Error: ${error.message}`);
     }
@@ -382,7 +381,7 @@ const stopGame=()=>{
               const scoreDifference=countRef.current-highest
               updateScore( scoreDifference , userGameAcctPublicKey)
             }
-            window.alert(`You lose   Score:${countRef.current}`)
+           /* window.alert(`You lose   Score:${countRef.current}`)*/
   
             stopGame()
           
@@ -437,7 +436,7 @@ const stopGame=()=>{
                 </div>
 
                 <div> 
-                  <WalletMultiButton/>
+                  
 
                 </div>
 
