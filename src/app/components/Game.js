@@ -1,6 +1,7 @@
 
 import React,  {useEffect, useState, useRef}from 'react'
 import { useWallet } from '@solana/wallet-adapter-react';
+import { useRouter } from 'next/router';
 import { PhantomWalletAdapter,  PhantomWalletName} from '@solana/wallet-adapter-wallets';
 import { WalletMultiButton } from '@solana/wallet-adapter-react-ui'
 import { Connection,Transaction ,clusterApiUrl } from '@solana/web3.js';
@@ -340,8 +341,7 @@ const stopGame=()=>{
 
     setTimeout(() => {
       setSignUpLoading(false)
-
-      window.location.reload();
+      router.reload();
     }, 3000);
   }    
  
@@ -497,12 +497,19 @@ const stopGame=()=>{
     ) : (
       <>
       
-      <div className="flex items-center justify-center h-screen bg-gray-100">
+      <div 
+      className={`relative bg-cover bg-center h-screen w-full transition-all duration-1000 ease-in-out flex flex-col items-center justify-center`}
+      style={{ backgroundImage: `url(/bird4.png)` }}
+    >
+
         <button onClick={createUserGameAccount} className="px-6 py-3 text-lg font-semibold text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors duration-300">
         
         
-        {signUpLoading  ? <div className="text-center mb-2 text-black"> Loading ..... </div> :''}
-          Sign Up  for {gameName}
+        {
+          signUpLoading  ? <div className="text-center mb-2 text-black"> Loading ..... </div> :
+          `Sign Up  for ${gameName}`
+        }
+      
         </button>
       </div>    
 
@@ -512,7 +519,7 @@ const stopGame=()=>{
   )
 }
 
-
+/*
 export async function getServerSideProps(){
 
   console.log(process.env.SECRET)
@@ -522,4 +529,4 @@ export async function getServerSideProps(){
       hello:"hello world" 
     }
   }
-}
+}*/

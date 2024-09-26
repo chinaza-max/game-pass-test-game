@@ -73,7 +73,7 @@ async function getSingleGameAccount(params) {
 }
 
 async function initializeUserGameAccount(data) {
-  return axios.post(`${domain}/game/getTransaction`, data);
+  return axios.post(`${domain}/game/getTrasaction`, data);
 }
 
 async function userGameAccountActions(data) {
