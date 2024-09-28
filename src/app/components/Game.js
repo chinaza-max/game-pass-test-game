@@ -4,7 +4,8 @@ import { useWallet } from '@solana/wallet-adapter-react';
 import { useRouter } from 'next/router';
 import { PhantomWalletAdapter,  PhantomWalletName} from '@solana/wallet-adapter-wallets';
 import { WalletMultiButton } from '@solana/wallet-adapter-react-ui'
-import { Connection,Transaction ,clusterApiUrl } from '@solana/web3.js';
+import { Connection,Transaction ,clusterApiUrl , sendAndConfirmTransaction } from '@solana/web3.js';
+
 import axios from 'axios';
 import Image from "next/image";
 import Counter from "./counter";
@@ -31,6 +32,7 @@ export default function Game() {
   //const [domain, setDomain] = useState("http://localhost:3001/api/v1");
   const [domain, setDomain] = useState("/api/game");
   const [signUpLoading, setSignUpLoading] = useState(false);
+  const [error, setError] = useState(null);
 
 
   
@@ -303,7 +305,8 @@ const stopGame=()=>{
     }
   },[publicKey])
 
-
+//      setSignUpLoading(false)
+/*
   const createUserGameAccount =async ()=>{
 
     setSignUpLoading(true)
@@ -325,24 +328,110 @@ const stopGame=()=>{
       throw new Error('Failed to fetch transaction from server');
     }
 
-    const data2=await response.json()
+    const data = await response.json();
+    const { serializedTransaction } = data.data;
 
-
-    const {serializedTransaction }= data2.data
-    console.log(serializedTransaction)
     const recoveredTransaction = Transaction.from(Buffer.from(serializedTransaction, 'base64'));
-    const signedTransaction = await signTransaction(recoveredTransaction);
-    console.log("txnSignature")  
-    const txnSignature = await sendTransaction(signedTransaction, connection);
-    console.log(txnSignature)  
-    await connection.confirmTransaction(txnSignature);
+    
+    const latestBlockhash = await connection.getLatestBlockhash();
+    recoveredTransaction.recentBlockhash = latestBlockhash.blockhash;
+    recoveredTransaction.lastValidBlockHeight = latestBlockhash.lastValidBlockHeight;
 
+    const signedTransaction = await signTransaction(recoveredTransaction);
+
+    const txnSignature = await sendAndConfirmTransaction(
+      connection,
+      signedTransaction,
+      [],  // We don't need to pass publicKey here as it's already in the transaction
+      {
+        commitment: 'confirmed',
+        maxRetries: 5,
+      }
+    );
+
+    console.log('Transaction confirmed:', txnSignature);
 
     setTimeout(() => {
-      setSignUpLoading(false)
+      setSignUpLoading(false);
       router.reload();
     }, 3000);
-  }    
+    
+
+
+  }    */
+
+
+    
+    const createUserGameAccount = async () => {
+      if (!publicKey || !signTransaction) {
+        setError('Wallet not connected');
+        return;
+      }
+  
+      setSignUpLoading(true);
+      setError(null);
+  
+      try {
+        const response = await fetch(`${domain}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ 
+            gamerPublicKey: publicKey.toString(),
+            gameId,
+            type: "initializeUserGameAccount",
+            actionType: "initializeUserGameAccount",
+            userAvatar: "https://cdn.pixabay.com/photo/2023/02/10/08/00/chick-7780328_1280.png"
+          }),
+        });
+  
+        if (!response.ok) {
+          throw new Error('Failed to fetch transaction from server');
+        }
+  
+        const data = await response.json();
+        const { serializedTransaction } = data.data;
+  
+        const recoveredTransaction = Transaction.from(Buffer.from(serializedTransaction, 'base64'));
+
+        // Sign the transaction
+        const signedTransaction = await signTransaction(recoveredTransaction);
+      
+        console.log(signedTransaction)
+        console.log("signedTransaction")
+        const base64Tx = signedTransaction.serialize().toString('base64');
+
+        console.log(base64Tx)
+        console.log("base64Tx")
+
+        const response2 = await fetch(`${domain}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ 
+            signedTransaction: base64Tx,
+            actionType: "sendTransactionInitializeUserGameAccount"
+          }),
+        });
+  
+        if (!response2.ok) {
+          throw new Error('Failed to send transaction to server');
+        }
+
+        setTimeout(() => {
+          setSignUpLoading(false);
+          router.reload();
+        }, 3000);
+
+        
+      } catch (err) {
+        setSignUpLoading(false);
+       
+        console.log(err)
+
+        console.log(err.message)
+
+        console.error('Transaction error:', err);
+      }
+    };
  
 
   useEffect(() => {

@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import { WalletMultiButton } from '@solana/wallet-adapter-react-ui';
 //import { Roboto } from 'next/font/google';
 import { Protest_Guerrilla } from 'next/font/google';
+import { useWallet } from '@solana/wallet-adapter-react';
 
 
 const protestGuerrilla = Protest_Guerrilla({
@@ -15,6 +16,7 @@ const GameTitleIntro = () => {
   const images = ['/bird4.png', 'none', '/bird3.png' , 'none', '/bird2.png', 'none', '/bird1.png', 'none', '/bird5.png'];
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [showOverlay, setShowOverlay] = useState(true);
+  const { disconnect } = useWallet();
 
   useEffect(() => {
     const intervalId = setInterval(() => {
@@ -25,6 +27,15 @@ const GameTitleIntro = () => {
   }, []);
 
   const handleBegin = () => {
+
+    try {
+      //disconnect();
+      console.log('Wallet disconnected');
+    } catch (error) {
+      console.error('Failed to disconnect wallet:', error);
+    }
+
+
     setShowOverlay(false);
     if (audioRefBirdIntro.current) {
       audioRefBirdIntro.current.play().catch(error => console.error("Playback failed:", error));

@@ -7,6 +7,10 @@ export async function POST(req) {
   try {
     const { actionType, ...data } = await req.json();
 
+    console.log("data")
+    console.log(data)
+    console.log("data")
+
     switch (actionType) {
       case 'doesUserGameAccountExist':
         return await handleResponse(doesUserGameAccountExist(data));
@@ -14,9 +18,11 @@ export async function POST(req) {
         return await handleResponse(initializeUserGameAccount(data));
       case 'userGameAccountActions':
         return await handleResponse(userGameAccountActions(data));
+      case 'sendTransactionInitializeUserGameAccount':
+        return await handleResponse(sendTransactionInitializeUserGameAccount(data));
       default:
         return NextResponse.json({ error: 'Invalid type' }, { status: 400 });
-    }
+    }//
   } catch (error) {
     console.error('API error:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
@@ -62,6 +68,7 @@ function handleResponse(promise) {
 async function doesUserGameAccountExist(data) {
     
   return axios.post(`${domain}/game/doesUserGameAccountExist`, data);
+
 }
 
 async function getSingleUserGameAccount(params) {
@@ -72,8 +79,12 @@ async function getSingleGameAccount(params) {
   return axios.get(`${domain}/game/getSingleGameAccount`, { params });
 }
 
-async function initializeUserGameAccount(data) {
+async function initializeUserGameAccount(data) {           
   return axios.post(`${domain}/game/getTrasaction`, data);
+}
+
+async function sendTransactionInitializeUserGameAccount(data) {
+  return axios.post(`${domain}/game/initializeUserGameAccount`, data);
 }
 
 async function userGameAccountActions(data) {
