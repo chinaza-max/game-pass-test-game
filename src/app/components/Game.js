@@ -39,10 +39,10 @@ export default function Game() {
   const [timerId, setTimerId] = useState(null);
 
   
-  const [ gameId, setGameId ] = useState("4aJW6PimTjEqDHFqbwDNRYZB4nXcoUwuqQ9uguivNSCv");
-  const [userGameAcctPublicKey, setUserGameAcctPublicKey ] = useState("");
+  const [ gameId, setGameId ] = useState("7FGXGbUeUA9wmv9o85WwtCWUwK6kTwiQ8hRTSeBKXPdo");
+  const [ userGameAcctPublicKey, setUserGameAcctPublicKey ] = useState("");
   
-  const [message, setMessage] = useState('');
+  const [ message, setMessage ] = useState('')
 
   //const audioRefBird = useRef(new Audio(playlist));
 
@@ -140,6 +140,7 @@ export default function Game() {
         gameId: gameId
       });
 
+    
       if(response.data.data==false){
         setIsAuthenticated('false');
         fetchGameAccount(response.data.data.accountId,false);
@@ -153,7 +154,8 @@ export default function Game() {
 
     } catch (error) {
       console.error('Error checking authentication:', error);
-      setIsAuthenticated(false);
+      //setIsAuthenticated(false);
+
     }
   };
 
@@ -305,63 +307,82 @@ const stopGame=()=>{
     }
   },[publicKey])
 
-//      setSignUpLoading(false)
-/*
-  const createUserGameAccount =async ()=>{
 
-    setSignUpLoading(true)
-    const response = await fetch(`${domain}`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(
-        { 
-          gamerPublicKey:publicKey.toString(),
-          gameId,
-          type:"initializeUserGameAccount",
-          actionType:"initializeUserGameAccount",
-          userAvatar:"https://cdn.pixabay.com/photo/2023/02/10/08/00/chick-7780328_1280.png"
-        }),
-    });
-
-    if (!response.ok) {
-      setSignUpLoading(false)
-      throw new Error('Failed to fetch transaction from server');
-    }
-
-    const data = await response.json();
-    const { serializedTransaction } = data.data;
-
-    const recoveredTransaction = Transaction.from(Buffer.from(serializedTransaction, 'base64'));
-    
-    const latestBlockhash = await connection.getLatestBlockhash();
-    recoveredTransaction.recentBlockhash = latestBlockhash.blockhash;
-    recoveredTransaction.lastValidBlockHeight = latestBlockhash.lastValidBlockHeight;
-
-    const signedTransaction = await signTransaction(recoveredTransaction);
-
-    const txnSignature = await sendAndConfirmTransaction(
-      connection,
-      signedTransaction,
-      [],  // We don't need to pass publicKey here as it's already in the transaction
-      {
-        commitment: 'confirmed',
-        maxRetries: 5,
+  /*   const createUserGameAccount = async () => {
+      if (!publicKey || !signTransaction) {
+        setError('Wallet not connected');
+        return;
       }
-    );
+  
+      setSignUpLoading(true);
+      setError(null);
+  
+      try {
+        const response = await fetch(`${domain}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ 
+            gamerPublicKey: publicKey.toString(),
+            gameId,
+            type: "initializeUserGameAccount",
+            actionType: "initializeUserGameAccount",
+            userAvatar: "https://cdn.pixabay.com/photo/2023/02/10/08/00/chick-7780328_1280.png"
+          }),
+        });
+  
+        if (!response.ok) {
+          throw new Error('Failed to fetch transaction from server');
+        }
+  
+        const data = await response.json();
+        const { serializedTransaction } = data.data;
+  
+        const recoveredTransaction = Transaction.from(Buffer.from(serializedTransaction, 'base64'));
 
-    console.log('Transaction confirmed:', txnSignature);
+        const latestBlockhash = await connection.getLatestBlockhash();
+        recoveredTransaction.recentBlockhash = latestBlockhash.blockhash;
+        recoveredTransaction.lastValidBlockHeight = latestBlockhash.lastValidBlockHeight;
 
-    setTimeout(() => {
-      setSignUpLoading(false);
-      router.reload();
-    }, 3000);
-    
+        // Sign the transaction
+        const signedTransaction = await signTransaction(recoveredTransaction);
+      
+        console.log(signedTransaction)
+        console.log("signedTransaction")
+        const base64Tx = signedTransaction.serialize().toString('base64');
 
+        console.log(base64Tx)
+        console.log("base64Tx")
 
-  }    */
+        const response2 = await fetch(`${domain}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ 
+            signedTransaction: base64Tx,
+            actionType: "sendTransactionInitializeUserGameAccount"
+          }),
+        });
+  
+        if (!response2.ok) {
+          throw new Error('Failed to send transaction to server');
+        }
 
+        setTimeout(() => {
+          setSignUpLoading(false);
+          router.reload();
+        }, 3000);
 
-    
+        
+      } catch (err) {
+        setSignUpLoading(false);
+       
+        console.log(err)
+
+        console.log(err.message)
+
+        console.error('Transaction error:', err);
+      }
+    }; */
+
     const createUserGameAccount = async () => {
       if (!publicKey || !signTransaction) {
         setError('Wallet not connected');
@@ -393,28 +414,33 @@ const stopGame=()=>{
   
         const recoveredTransaction = Transaction.from(Buffer.from(serializedTransaction, 'base64'));
 
+        const latestBlockhash = await connection.getLatestBlockhash();
+        recoveredTransaction.recentBlockhash = latestBlockhash.blockhash;
+        recoveredTransaction.lastValidBlockHeight = latestBlockhash.lastValidBlockHeight;
+
         // Sign the transaction
         const signedTransaction = await signTransaction(recoveredTransaction);
       
-        console.log(signedTransaction)
-        console.log("signedTransaction")
-        const base64Tx = signedTransaction.serialize().toString('base64');
+       
+        const signature = await connection.sendRawTransaction(
+          signedTransaction.serialize(),
+          {
+            skipPreflight: false,
+            preflightCommitment: 'confirmed'
+          }
+        );
 
-        console.log(base64Tx)
-        console.log("base64Tx")
 
-        const response2 = await fetch(`${domain}`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ 
-            signedTransaction: base64Tx,
-            actionType: "sendTransactionInitializeUserGameAccount"
-          }),
-        });
-  
-        if (!response2.ok) {
-          throw new Error('Failed to send transaction to server');
+        const confirmation = await connection.confirmTransaction({
+          signature,
+          blockhash: latestBlockhash.blockhash,
+          lastValidBlockHeight: latestBlockhash.lastValidBlockHeight
+        }, 'confirmed');
+    
+        if (confirmation.value.err) {
+          throw new Error('Transaction failed to confirm');
         }
+    
 
         setTimeout(() => {
           setSignUpLoading(false);
@@ -470,7 +496,7 @@ const stopGame=()=>{
               const scoreDifference=countRef.current-highest
               updateScore( scoreDifference , userGameAcctPublicKey)
             }
-           /* window.alert(`You lose   Score:${countRef.current}`)*/
+            // window.alert(`You lose   Score:${countRef.current}`)
   
             stopGame()
           

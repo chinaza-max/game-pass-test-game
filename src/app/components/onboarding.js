@@ -29,7 +29,7 @@ const GameTitleIntro = () => {
   const handleBegin = () => {
 
     try {
-      //disconnect();
+      disconnect();
       console.log('Wallet disconnected');
     } catch (error) {
       console.error('Failed to disconnect wallet:', error);
@@ -50,7 +50,7 @@ const GameTitleIntro = () => {
       <audio ref={audioRefBirdIntro} src='/introduction2.mp3' loop />
       
       <h1 className="text-4xl sm:text-5xl md:text-7xl font-extrabold mb-8 text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 animate-gradient">
-        BIRD ATTACK
+        BIRD MOVE
       </h1>
       
       <WalletMultiButton />
