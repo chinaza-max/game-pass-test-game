@@ -35,7 +35,7 @@ export default function Game() {
   const [error, setError] = useState(null);
   const router = useRouter(); 
 
-  
+     
   const [timerId, setTimerId] = useState(null);
 
   
