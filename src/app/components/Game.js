@@ -33,7 +33,7 @@ export default function Game() {
   const [domain, setDomain] = useState("/api/game");
   const [signUpLoading, setSignUpLoading] = useState(false);
   const [error, setError] = useState(null);
-
+  const router = useRouter(); 
 
   
   const [timerId, setTimerId] = useState(null);
@@ -421,7 +421,6 @@ const stopGame=()=>{
         // Sign the transaction
         const signedTransaction = await signTransaction(recoveredTransaction);
       
-       
         const signature = await connection.sendRawTransaction(
           signedTransaction.serialize(),
           {
