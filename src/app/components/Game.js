@@ -1,7 +1,7 @@
 
 import React,  {useEffect, useState, useRef}from 'react'
 import { useWallet } from '@solana/wallet-adapter-react';
-import { useRouter } from 'next/router';
+//import { useRouter } from 'next/router';
 import { PhantomWalletAdapter,  PhantomWalletName} from '@solana/wallet-adapter-wallets';
 import { WalletMultiButton } from '@solana/wallet-adapter-react-ui'
 import { Connection,Transaction ,clusterApiUrl , sendAndConfirmTransaction } from '@solana/web3.js';
@@ -33,7 +33,7 @@ export default function Game() {
   const [domain, setDomain] = useState("/api/game");
   const [signUpLoading, setSignUpLoading] = useState(false);
   const [error, setError] = useState(null);
-  const router = useRouter(); 
+  //const router = useRouter(); 
 
      
   const [timerId, setTimerId] = useState(null);
@@ -443,7 +443,8 @@ const stopGame=()=>{
 
         setTimeout(() => {
           setSignUpLoading(false);
-          router.reload();
+          //router.reload();
+          window.location.reload()
         }, 3000);
 
         
